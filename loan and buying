@@ -1,0 +1,150 @@
+#include <stdio.h>
+#include <math.h>
+
+#define VENDING 1
+#define LOAN 2
+#define QUIT 3
+
+int menu(void);
+int selection(int choice);
+int vending(void);
+void loan(void);
+
+int main(void) {
+    int choice;
+    int totalSpent = 0;
+
+    /* Repeat the menu until the user chooses Quit. */
+    do {
+        choice = menu();
+        totalSpent += selection(choice);
+    } while (choice != QUIT);
+
+    /* Display the total item cost in dollars and cents. */
+    printf("Grand total spent on vending machine: $%d.%02d\n",
+           totalSpent / 100, totalSpent % 100);
+
+    return 0;
+}
+
+int menu(void) {
+    int choice;
+
+    /* Keep asking until the user enters a valid menu choice. */
+    do {
+        printf("\nChoose one of the following options:\n");
+        printf("%d. Vending Machine\n", VENDING);
+        printf("%d. Loan\n", LOAN);
+        printf("%d. Quit\n", QUIT);
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        if (choice < VENDING || choice > QUIT) {
+            printf("Invalid choice. Enter 1, 2, or 3.\n");
+        }
+    } while (choice < VENDING || choice > QUIT);
+
+    return choice;
+}
+
+int selection(int choice) {
+    /* Use a switch to run the function for the selected option. */
+    switch (choice) {
+        case VENDING:
+            return vending();
+
+        case LOAN:
+            loan();
+            return 0;
+
+        case QUIT:
+            printf("Quitting.\n");
+            return 0;
+
+        default:
+            return 0;
+    }
+}
+
+int vending(void) {
+    int price;
+    int change;
+    int quarters;
+    int dimes;
+    int nickels;
+
+    /* Keep asking until the price is within the allowed range and increment. */
+    do {
+        printf("Enter price of item in cents: ");
+        scanf("%d", &price);
+
+        if (price < 25 || price > 100 || price % 5 != 0) {
+            printf("Enter a price from 25 to 100 cents in 5-cent increments.\n");
+        }
+    } while (price < 25 || price > 100 || price % 5 != 0);
+
+    /* The machine accepts one dollar, or 100 cents. */
+    change = 100 - price;
+
+    quarters = change / 25;
+    change = change % 25;
+
+    dimes = change / 10;
+    change = change % 10;
+
+    nickels = change / 5;
+
+    printf("You bought an item for %d cents and gave me a dollar. "
+           "Your change is:\n", price);
+    printf("%d quarter%s,\n", quarters, quarters == 1 ? "" : "s");
+    printf("%d dime%s, and\n", dimes, dimes == 1 ? "" : "s");
+    printf("%d nickel%s.\n", nickels, nickels == 1 ? "" : "s");
+
+    /* Return this purchase's price so main can add it to the total. */
+    return price;
+}
+
+void loan(void) {
+    double loanAmount;
+    double annualRate;
+    double monthlyRate;
+    double numberPayments;
+    double monthlyPayment;
+    double amountPaidBack;
+    double interestPaid;
+
+    /* Get the three values used in the loan calculation. */
+    printf("Enter the loan amount: ");
+    scanf("%lf", &loanAmount);
+
+    printf("Enter the annual interest rate (percent): ");
+    scanf("%lf", &annualRate);
+
+    printf("Enter the number of payments: ");
+    scanf("%lf", &numberPayments);
+
+    /* Convert the annual percentage rate to a monthly decimal rate. */
+    monthlyRate = annualRate / 12.0 / 100.0;
+
+    /* Calculate the monthly payment. */
+    if (monthlyRate == 0.0) {
+        monthlyPayment = loanAmount / numberPayments;
+    } else {
+        monthlyPayment =
+            loanAmount * monthlyRate *
+            pow(1.0 + monthlyRate, numberPayments) /
+            (pow(1.0 + monthlyRate, numberPayments) - 1.0);
+    }
+
+    amountPaidBack = monthlyPayment * numberPayments;
+    interestPaid = amountPaidBack - loanAmount;
+
+    /* Display the loan results with the requested decimal formatting. */
+    printf("\n%-30s $ %10.2f\n", "Loan Amount:", loanAmount);
+    printf("%-30s %10.0f\n", "Monthly Interest Rate:",
+           monthlyRate * 100.0);
+    printf("%-30s %10.0f\n", "Number of Payments:", numberPayments);
+    printf("%-30s $ %10.2f\n", "Monthly Payment:", monthlyPayment);
+    printf("%-30s $ %10.2f\n", "Amount Paid Back:", amountPaidBack);
+    printf("%-30s $ %10.2f\n", "Interest Paid:", interestPaid);
+}
