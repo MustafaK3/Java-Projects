@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+test(){
+	local name=$1
+	echo "hello $name (from func)"
+
+}
+
+for name in "$@"; do 
+	 test "$name" >> file.txt
+done
+
+var=$(test dave)
+echo "var is $var"
