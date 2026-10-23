@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+open -a Notes
+echo "opening Notes"
+open -a "Visual Studio Code"
+echo "opening Vs Code"
+
